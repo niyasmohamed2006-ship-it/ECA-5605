@@ -1,0 +1,117 @@
+clc;
+clear;
+close all;
+
+%% 5G Network Slicing Environment
+
+% Total available network resources
+Total_Bandwidth = 100;      % MHz
+Total_Resources = 100;      % Resource units
+
+% Network slices
+Slices = {'eMBB','URLLC','mMTC'};
+
+% Resource allocation (%)
+Bandwidth = [60 25 15];     % MHz
+Resources = [60 25 15];     % Resource units
+
+% Latency requirements (ms)
+Latency = [10 1 50];
+
+% Number of users
+Users = [20 10 50];
+
+%% Display Network Slice Information
+
+fprintf('============================================\n');
+fprintf('        5G NETWORK SLICING ENVIRONMENT\n');
+fprintf('============================================\n');
+
+fprintf('Total Bandwidth  : %d MHz\n', Total_Bandwidth);
+fprintf('Total Resources  : %d Units\n\n', Total_Resources);
+
+fprintf('%-10s %-15s %-15s %-15s %-10s\n', ...
+    'Slice','Bandwidth(MHz)','Resources','Latency(ms)','Users');
+
+fprintf('------------------------------------------------------------\n');
+
+for i = 1:length(Slices)
+
+    fprintf('%-10s %-15d %-15d %-15d %-10d\n', ...
+        Slices{i}, Bandwidth(i), Resources(i), ...
+        Latency(i), Users(i));
+
+end
+
+%% Figure 1: Bandwidth Allocation
+
+figure;
+
+bar(Bandwidth);
+
+set(gca,'XTickLabel',Slices);
+
+xlabel('5G Network Slice');
+ylabel('Bandwidth (MHz)');
+title('Bandwidth Allocation Among 5G Network Slices');
+
+grid on;
+
+%% Figure 2: Resource Allocation
+
+figure;
+
+bar(Resources);
+
+set(gca,'XTickLabel',Slices);
+
+xlabel('5G Network Slice');
+ylabel('Resource Units');
+title('Resource Allocation in 5G Network Slicing');
+
+grid on;
+
+%% Figure 3: Latency Comparison
+
+figure;
+
+bar(Latency);
+
+set(gca,'XTickLabel',Slices);
+
+xlabel('5G Network Slice');
+ylabel('Latency Requirement (ms)');
+title('Latency Requirements of Different 5G Network Slices');
+
+grid on;
+
+%% Figure 4: User Distribution
+
+figure;
+
+bar(Users);
+
+set(gca,'XTickLabel',Slices);
+
+xlabel('5G Network Slice');
+ylabel('Number of Users');
+title('User Distribution Among 5G Network Slices');
+
+grid on;
+
+%% Pie Chart - Bandwidth Distribution
+
+figure;
+
+pie(Bandwidth, Slices);
+
+title('5G Network Bandwidth Distribution');
+
+%% Display Results
+
+fprintf('\nNetwork Slice Description:\n');
+fprintf('--------------------------------------------\n');
+fprintf('eMBB  : High bandwidth applications\n');
+fprintf('URLLC : Ultra-low latency applications\n');
+fprintf('mMTC  : Massive IoT applications\n');
+fprintf('--------------------------------------------\n');
