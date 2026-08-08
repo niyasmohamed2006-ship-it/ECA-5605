@@ -1,0 +1,80 @@
+clc;
+clear;
+close all;
+
+%% Steering Angle Variation in MIMO Beamforming
+
+% System parameters
+N = 8;                  % Number of antenna elements
+fc = 28e9;              % Carrier frequency = 28 GHz
+c = 3e8;                % Speed of light
+lambda = c/fc;          % Wavelength
+d = lambda/2;            % Antenna spacing
+
+% Steering angles to be tested
+steering_angles = [-60 -30 0 30 60];
+
+% Observation angle
+theta = -90:0.1:90;
+
+% Antenna element index
+n = (0:N-1).';
+
+%% Create Figure
+figure;
+hold on;
+grid on;
+
+% Loop for different steering angles
+for s = 1:length(steering_angles)
+
+    theta0 = steering_angles(s);
+
+    % Steering/beamforming weights
+    w = exp(1j * 2*pi*d/lambda * n * sind(theta0));
+
+    % Normalize weights
+    w = w / sqrt(N);
+
+    % Array response
+    AF = zeros(size(theta));
+
+    for k = 1:length(theta)
+
+        % Steering vector
+        a = exp(1j * 2*pi*d/lambda * n * sind(theta(k)));
+
+        % Beamforming response
+        AF(k) = abs(w' * a);
+
+    end
+
+    % Convert to dB
+    AF_dB = 20*log10(AF/max(AF));
+
+    % Plot beam pattern
+    plot(theta, AF_dB, 'LineWidth', 1.8);
+
+end
+
+%% Plot settings
+xlabel('Angle (degrees)');
+ylabel('Normalized Gain (dB)');
+title('Steering Angle Variation in MIMO Beamforming');
+
+legend('-60°', '-30°', '0°', '30°', '60°');
+
+xlim([-90 90]);
+ylim([-40 5]);
+
+hold off;
+
+%% Display Parameters
+fprintf('--------------------------------------\n');
+fprintf('MIMO Beamforming Parameters\n');
+fprintf('--------------------------------------\n');
+fprintf('Number of Antennas : %d\n', N);
+fprintf('Frequency           : %.2f GHz\n', fc/1e9);
+fprintf('Wavelength          : %.4f m\n', lambda);
+fprintf('Antenna Spacing     : %.4f m\n', d);
+fprintf('--------------------------------------\n');
