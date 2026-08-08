@@ -1,0 +1,95 @@
+clc;
+clear;
+close all;
+
+%% 5G NR Frame Structure Analysis
+% Different Subcarrier Spacing (SCS)
+
+SCS = [15 30 60 120];       % Subcarrier spacing in kHz
+mu = log2(SCS/15);           % Numerology
+
+% Number of OFDM symbols per slot
+symbolsPerSlot = 14;
+
+% Number of slots per 1 ms subframe
+slotsPerSubframe = 2.^mu;
+
+% Slot duration in milliseconds
+slotDuration = 1 ./ slotsPerSubframe;
+
+% Number of slots in a 10 ms radio frame
+slotsPerFrame = 10 .* slotsPerSubframe;
+
+% Total OFDM symbols in one 10 ms frame
+symbolsPerFrame = slotsPerFrame .* symbolsPerSlot;
+
+%% Display Results
+fprintf('5G NR Frame Structure Analysis\n');
+fprintf('---------------------------------------------\n');
+fprintf('SCS(kHz)  Numerology  Slot(ms)  Slots/Frame  Symbols/Frame\n');
+
+for i = 1:length(SCS)
+    fprintf('%7d %10d %10.3f %12d %14d\n', ...
+        SCS(i), mu(i), slotDuration(i), ...
+        slotsPerFrame(i), symbolsPerFrame(i));
+end
+
+%% Plot Slot Duration
+figure;
+
+subplot(2,1,1);
+bar(SCS, slotDuration);
+grid on;
+xlabel('Subcarrier Spacing (kHz)');
+ylabel('Slot Duration (ms)');
+title('5G NR Slot Duration vs Subcarrier Spacing');
+
+%% Plot Number of Slots per Frame
+subplot(2,1,2);
+bar(SCS, slotsPerFrame);
+grid on;
+xlabel('Subcarrier Spacing (kHz)');
+ylabel('Slots per 10 ms Frame');
+title('Number of Slots per 10 ms Frame');
+
+%% Frame Structure Visualization
+figure;
+
+for i = 1:length(SCS)
+
+    subplot(length(SCS),1,i);
+
+    % Create symbol positions
+    symbols = 1:symbolsPerFrame(i);
+
+    % Display symbols
+    plot(symbols, ones(size(symbols)), 'o');
+    grid on;
+
+    xlabel('OFDM Symbol');
+    yticks([]);
+
+    title(sprintf('5G NR Frame - SCS = %d kHz', SCS(i)));
+
+end
+
+%% Display Individual Slot Structure
+figure;
+
+for i = 1:length(SCS)
+
+    subplot(4,1,i);
+
+    % 14 OFDM symbols per slot
+    x = 1:14;
+
+    stem(x, ones(1,14), 'filled');
+    grid on;
+
+    xlabel('OFDM Symbol');
+    yticks([]);
+
+    title(sprintf('One NR Slot - SCS = %d kHz, Slot Duration = %.3f ms', ...
+        SCS(i), slotDuration(i)));
+
+end
