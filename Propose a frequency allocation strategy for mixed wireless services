@@ -1,0 +1,79 @@
+clc;
+clear;
+close all;
+
+%% Frequency Allocation for Mixed Wireless Services
+
+% Define wireless services
+services = {'Wi-Fi', 'LTE/5G', 'Bluetooth', 'IoT'};
+
+% Frequency ranges in MHz
+freq_start = [2400 2500  2450  850];
+freq_end   = [2483 2690  2483  950];
+
+% Bandwidth requirement in MHz
+bandwidth = [20 100 10 5];
+
+% Priority of each service
+priority = [3 1 4 2];
+
+%% Display Allocation Table
+
+fprintf('Frequency Allocation Strategy\n');
+fprintf('---------------------------------------------\n');
+fprintf('Service\t\tStart(MHz)\tEnd(MHz)\tBW(MHz)\tPriority\n');
+
+for i = 1:length(services)
+    fprintf('%s\t\t%d\t\t%d\t\t%d\t\t%d\n', ...
+        services{i}, freq_start(i), freq_end(i), ...
+        bandwidth(i), priority(i));
+end
+
+%% Calculate Spectrum Utilization
+
+total_spectrum = sum(freq_end - freq_start);
+used_spectrum = sum(bandwidth);
+utilization = (used_spectrum / total_spectrum) * 100;
+
+fprintf('\nTotal Available Spectrum = %.2f MHz\n', total_spectrum);
+fprintf('Allocated Bandwidth = %.2f MHz\n', used_spectrum);
+fprintf('Spectrum Utilization = %.2f %%\n', utilization);
+
+%% Frequency Allocation Graph
+
+figure;
+
+for i = 1:length(services)
+
+    rectangle('Position', ...
+        [freq_start(i), i-0.35, ...
+         freq_end(i)-freq_start(i), 0.7], ...
+         'FaceColor', [0.2 0.6 0.8]);
+
+    hold on;
+
+    text((freq_start(i)+freq_end(i))/2, i, ...
+        services{i}, ...
+        'HorizontalAlignment', 'center', ...
+        'FontWeight', 'bold');
+end
+
+xlabel('Frequency (MHz)');
+ylabel('Wireless Services');
+title('Frequency Allocation Strategy for Mixed Wireless Services');
+
+yticks(1:length(services));
+yticklabels(services);
+
+grid on;
+hold off;
+
+%% Priority Based Allocation
+
+[~, order] = sort(priority);
+
+fprintf('\nPriority-Based Allocation Order:\n');
+
+for i = 1:length(order)
+    fprintf('%d. %s\n', i, services{order(i)});
+end
