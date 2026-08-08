@@ -1,0 +1,74 @@
+clc;
+clear;
+close all;
+
+%% Analog Beamforming using Uniform Linear Array
+
+% Parameters
+N = 8;                  % Number of antenna elements
+fc = 28e9;              % Carrier frequency = 28 GHz
+c = 3e8;                % Speed of light
+lambda = c/fc;          % Wavelength
+d = lambda/2;            % Antenna spacing
+
+% Desired beam direction
+theta0 = 30;             % Steering angle in degrees
+
+% Angle range
+theta = -90:0.1:90;
+
+%% Calculate steering vector
+
+% Steering vector for desired direction
+n = (0:N-1).';
+
+w = exp(1j*2*pi*d/lambda*n*sind(theta0));
+
+% Normalize beamforming weights
+w = w/sqrt(N);
+
+%% Calculate Array Factor
+
+AF = zeros(size(theta));
+
+for k = 1:length(theta)
+
+    % Steering vector for angle theta
+    a = exp(1j*2*pi*d/lambda*n*sind(theta(k)));
+
+    % Beamforming response
+    AF(k) = abs(w' * a);
+
+end
+
+%% Convert to dB
+
+AF_dB = 20*log10(AF/max(AF));
+
+%% Plot Beam Pattern
+
+figure;
+
+plot(theta, AF_dB, 'LineWidth', 2);
+
+grid on;
+xlabel('Angle (degrees)');
+ylabel('Normalized Gain (dB)');
+title('Analog Beamforming Beam Pattern');
+
+xlim([-90 90]);
+ylim([-40 5]);
+
+% Mark desired beam direction
+hold on;
+plot(theta0, 0, 'ro', 'MarkerSize', 8, 'LineWidth', 2);
+
+legend('Beam Pattern', 'Desired Direction');
+
+%% Display Parameters
+
+fprintf('Number of Antenna Elements = %d\n', N);
+fprintf('Carrier Frequency = %.2f GHz\n', fc/1e9);
+fprintf('Wavelength = %.4f m\n', lambda);
+fprintf('Antenna Spacing = %.4f m\n', d);
+fprintf('Beam Steering Angle = %d degrees\n', theta0);
